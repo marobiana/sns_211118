@@ -31,12 +31,13 @@
 		<%-- 타임라인 영역 --%>
 		<%-- my: margin 위아래(y축) --%>
 		<div class="timeline-box my-5">
+			<c:forEach items="${cardViewList}" var="card">
 				<%-- 카드 하나하나마다 영역을 border로 나눔 --%>
 				<div class="card border rounded mt-3">
 					
 					<%-- 글쓴이 아이디 및 ... 버튼(삭제) : 이 둘을 한 행에 멀리 떨어뜨려 나타내기 위해 d-flex, between --%>
 					<div class="p-2 d-flex justify-content-between">
-						<span class="font-weight-bold">글쓴이명</span>
+						<span class="font-weight-bold">${card.user.name}</span>
 						
 						<%-- TODO 삭제 --%>
 					</div>
@@ -44,7 +45,7 @@
 					<%-- 카드 이미지 --%>
 					<div class="card-img">
 						<%-- 이미지가 존재하는 경우에만 노출 --%>
-							<img src="https://cdn.pixabay.com/photo/2022/02/28/15/28/sea-7039471_960_720.jpg" class="w-100" alt="이미지">
+							<img src="${card.post.imagePath}" class="w-100" alt="이미지">
 					</div>
 					
 					<%-- 좋아요 --%>
@@ -58,38 +59,47 @@
 					
 					<%-- 글(Post) --%>
 					<div class="card-post m-3">
-						<span class="font-weight-bold">글쓴이명</span> 
+						<span class="font-weight-bold">${card.user.name}</span> 
 						<span>
-							내용내용내용
+							${card.post.content}
 						</span>
 					</div>
 					
 					<%-- 댓글(Comment) --%>
 					
 					<%-- "댓글" - 댓글이 있는 경우에만 댓글 영역 노출 --%>
+					<c:if test="${not empty card.commentList}">
 						<div class="card-comment-desc border-bottom">
 							<div class="ml-3 mb-1 font-weight-bold">댓글</div>
 						</div>
 						<div class="card-comment-list m-2">
 							<%-- 댓글 목록 --%>
+							<c:forEach items="${card.commentList}" var="commentView">
 								<div class="card-comment m-1">
-									<span class="font-weight-bold">댓글쓴이 : </span>
-									<span>댓글 내용</span>
+									<span class="font-weight-bold">${commentView.user.name} : </span>
+									<span>${commentView.comment.content}</span>
 									
 									<%-- 댓글쓴이가 본인이면 삭제버튼 노출 --%>
+									<c:if test="${commentView.user.id eq userId}">
 										<a href="#" class="commentDelBtn">
 											<img src="https://www.iconninja.com/files/603/22/506/x-icon.png" width="10px" height="10px">
 										</a>
+									</c:if>
 								</div>
+							</c:forEach>
 						</div>
+					</c:if>
 					
 					<%-- 댓글 쓰기 --%>
 					<%-- 로그인 된 상태에서만 쓸 수 있다. --%>
+					<c:if test="${not empty userId}">
 						<div class="comment-write d-flex border-top mt-2">
-							<input type="text" class="form-control border-0 mr-2" placeholder="댓글 달기"/> 
-							<button type="button" class="commentBtn btn btn-light">게시</button>
+							<input type="text" id="comment${post.id}" class="form-control border-0 mr-2" placeholder="댓글 달기"/> 
+							<button type="button" class="commentBtn btn btn-light" data-post-id="${post.id}">게시</button>
 						</div>
+					</c:if>
 				</div>
+			</c:forEach>
 		</div>
 	</div>
 </div>    
@@ -167,6 +177,39 @@ $(document).ready(function() {
 			}
 			, error: function(e) {
 				alert("메모 저장에 실패했습니다. 관리자에게 문의해주세요.");
+			}
+		});
+	});
+	
+	// 댓글 쓰기
+	$('.commentBtn').on('click', function() {
+		let postId = $(this).data('post-id');
+		//alert(postId);
+		
+		//let commentContent = $('#comment' + postId).val().trim();
+		let commentContent = $(this).siblings('input').val().trim();
+		//alert(commentContent);
+		
+		if (commentContent == '') {
+			alert("댓글 내용을 입력해주세요");
+			return;
+		}
+		
+		// ajax 
+		$.ajax({
+			type:'POST',
+			url:'/comment/create',
+			data: {"postId":postId, "content":commentContent},
+			success: function(data) {
+				if (data.result == 'success') {
+					location.reload(); // 새로고침
+				} else {
+					alert(data.error_message);
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				var errorMsg = jqXHR.responseJSON.status;
+				alert(errorMsg + ":" + textStatus);
 			}
 		});
 	});
