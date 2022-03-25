@@ -94,8 +94,8 @@
 					<%-- 로그인 된 상태에서만 쓸 수 있다. --%>
 					<c:if test="${not empty userId}">
 						<div class="comment-write d-flex border-top mt-2">
-							<input type="text" id="comment${post.id}" class="form-control border-0 mr-2" placeholder="댓글 달기"/> 
-							<button type="button" class="commentBtn btn btn-light" data-post-id="${post.id}">게시</button>
+							<input type="text" id="comment${card.post.id}" class="form-control border-0 mr-2" placeholder="댓글 달기"/> 
+							<button type="button" class="commentBtn btn btn-light" data-post-id="${card.post.id}">게시</button>
 						</div>
 					</c:if>
 				</div>
