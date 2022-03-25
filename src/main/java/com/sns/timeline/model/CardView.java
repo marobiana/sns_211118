@@ -13,8 +13,10 @@ public class CardView {
 	private Post post;
 	// 댓글들
 	private List<CommentView> commentList;
-//	// 좋아요들
-//	private List<Like> likeList;
+	// 좋아요 수
+	private int count;
+	// 로그인 된 사용자가 좋아요 눌렀는지 여부
+	private boolean filledLike;
 	
 	// 글쓴이 정보 => 글에 대한 
 	private User user;
