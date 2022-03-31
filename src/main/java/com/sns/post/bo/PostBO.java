@@ -35,4 +35,24 @@ public class PostBO {
 		
 		postDAO.insertPost(userId, content, imagePath);
 	}
+	
+	public int deletePost(int postId, int userId) {
+		// select post
+		
+		// post null 검사 => null이면 logger, 0 return
+		
+		// 이미지 삭제 
+		
+		// 글 삭제
+		
+		// 댓글들 삭제
+		
+		// 좋아요들 삭제 byPostId
+		
+		return 0;
+	}
 }
+
+
+
+

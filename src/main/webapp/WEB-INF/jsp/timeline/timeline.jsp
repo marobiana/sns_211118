@@ -35,11 +35,16 @@
 				<%-- 카드 하나하나마다 영역을 border로 나눔 --%>
 				<div class="card border rounded mt-3">
 					
-					<%-- 글쓴이 아이디 및 ... 버튼(삭제) : 이 둘을 한 행에 멀리 떨어뜨려 나타내기 위해 d-flex, between --%>
+					<%-- 글쓴이명, 삭제버튼 --%>
 					<div class="p-2 d-flex justify-content-between">
 						<span class="font-weight-bold">${card.user.name}</span>
 						
-						<%-- TODO 삭제 --%>
+						<%-- 글쓴이와 로그인된 사용자가 일치할 경우 버튼 노출 --%>
+						<c:if test="${card.user.id eq userId}">
+						<a href="#" class="more-btn" data-toggle="modal" data-target="#moreModal" data-post-id="${card.post.id}">
+							<img src="https://www.iconninja.com/files/860/824/939/more-icon.png" width="30">
+						</a>
+						</c:if>
 					</div>
 					
 					<%-- 카드 이미지 --%>
@@ -110,6 +115,25 @@
 		</div>
 	</div>
 </div>    
+
+
+<!-- Modal -->
+<div class="modal fade" id="moreModal">
+	<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+		<div class="modal-content">
+      		<div class="text-center">
+      			<div class="my-3">
+      				<a href="#" id="postDeleteBtn" class="d-block">삭제하기</a>
+      			</div>
+      			<hr>
+      			<div class="my-3">
+      				<a href="#" class="d-block" data-dismiss="modal">취소</a>
+      			</div>
+      		</div>
+		</div>
+	</div>
+</div>
+
 
 <script>
 $(document).ready(function() {
@@ -239,6 +263,38 @@ $(document).ready(function() {
 			}
 			,error: function(e) {
 				alert("좋아요가 실패했습니다. 관리자에게 문의해주세요.");
+			}
+		});
+	});
+	
+	// 카드에서 더보기(...) 클릭할 때 삭제될 글번호를 모달에 넣어준다.
+	$('.more-btn').on('click', function() {
+		let postId = $(this).data('post-id');
+		//alert(postId);
+		
+		$('#moreModal').data('post-id', postId);  // data-post-id="1"
+	});
+	
+	// 모달창 안에 있는 '삭제하기' 글자 클릭
+	$('#moreModal #postDeleteBtn').on('click', function(e) {
+		e.preventDefault();
+		
+		let postId = $('#moreModal').data('post-id');
+		//alert(postId);
+		
+		$.ajax({
+			type:"DELETE"
+			, url:"/post/delete"
+			, data: {"postId":postId}
+			, success:function(data) {
+				if (data.result == "success") {
+					location.reload();
+				} else {
+					alert(data.error_message);
+				}
+			}
+			, error:function(e) {
+				alert("삭제하는데 실패했습니다. 관리자에게 문의해주세요.");
 			}
 		});
 	});
