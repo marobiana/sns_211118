@@ -11,8 +11,16 @@ import com.sns.post.model.Post;
 public interface PostDAO {
 	public List<Post> selectPostList();
 	
+	public Post selectPostByIdAndUserId(
+			@Param("postId") int postId,
+			@Param("userId") int userId);
+	
 	public void insertPost(
 			@Param("userId") int userId, 
 			@Param("content") String content, 
 			@Param("imagePath") String imagePath);
+	
+	public void deletePostByIdAndUserId(
+			@Param("postId") int postId,
+			@Param("userId") int userId);
 }

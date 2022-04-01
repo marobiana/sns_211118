@@ -16,6 +16,7 @@ public class PostController {
 	@Autowired
 	private PostBO postBO;
 
+	// 글 목록 테스트
 	@RequestMapping("/post_list_view")
 	public String postListView(Model model) {
 		List<Post> postList = postBO.getPostList();

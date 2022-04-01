@@ -19,6 +19,12 @@ public class TimelineController {
 	@Autowired
 	private TimelineBO timelineBO;
 	
+	/**
+	 * 타임라인 화면
+	 * @param model
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/timeline_view")
 	public String timelineView(Model model, HttpSession session) {
 		Integer userId = (Integer) session.getAttribute("userId");
